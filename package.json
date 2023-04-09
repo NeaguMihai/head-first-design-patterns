@@ -1,0 +1,30 @@
+{
+  "name": "head-first-design-patterns",
+  "version": "1.0.0",
+  "description": "implementing the concepts of the book",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node ",
+    "start:dev": "tsc --watch & nodemon -q -w dist"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.33.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^3.5.2",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-sonarjs": "^0.18.0",
+    "eslint-plugin-unicorn": "^46.0.0",
+    "nodemon": "^2.0.22",
+    "prettier": "^2.8.3",
+    "ts-node": "^10.0.0"
+  }
+}
