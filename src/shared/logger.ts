@@ -1,17 +1,26 @@
-import winston, { format, createLogger, transports } from 'winston';
+import winston, { format, createLogger, transports, addColors } from 'winston';
 
 const { combine, timestamp, printf } = format;
 
+addColors({ data: 'bold' });
+addColors({ label: 'bold yellow' });
+addColors({ date: 'gray' });
+addColors({ level: 'bold' });
+
+const colorizer = format.colorize();
 const customFormat = printf(info => {
   const { level, message, timestamp } = info;
-  const stringifiedMessage: string =
-    typeof message === 'object' ? JSON.stringify(message) : message;
+  const isObject = typeof message === 'object';
+  const stringifiedMessage: string = isObject ? JSON.stringify(message, undefined, 2) : message;
   const label = info[Symbol.for('splat')][0];
   const stringifiedLabel: string = typeof label === 'object' ? JSON.stringify(label) : label;
 
-  return `${new Date(timestamp).toISOString()} [${
-    stringifiedLabel || 'App'
-  }] ${level}: ${stringifiedMessage}`;
+  return `${colorizer.colorize('date', new Date(timestamp).toISOString())}   ${colorizer.colorize(
+    'level',
+    pad(level.toUpperCase() + ':', 7),
+  )} ${colorizer.colorize('label', `[${stringifiedLabel || 'App'}]`)}  ${
+    isObject ? 'Object: \n' : ''
+  }${colorizer.colorize('data', stringifiedMessage)}`;
 });
 
 const logger = createLogger({
@@ -30,32 +39,23 @@ class BaseLogger {
   }
 
   log(message: unknown, label?: unknown) {
-    const { stringifiedMessage, stringifiedLabel } = this.parseinput(message, label);
-
-    logger.log('info', stringifiedMessage, stringifiedLabel);
+    logger.log('info', message as string, label);
   }
 
   error(message: unknown, label?: unknown) {
-    const a = 'sadas';
-
-    a;
-    const { stringifiedMessage, stringifiedLabel } = this.parseinput(message, label);
-
-    logger.error(stringifiedMessage, stringifiedLabel);
+    logger.error(message as string, label);
   }
 
   warn(message: unknown, label?: unknown) {
-    const { stringifiedMessage, stringifiedLabel } = this.parseinput(message, label);
-
-    logger.warn(stringifiedMessage, stringifiedLabel);
-  }
-
-  private parseinput(message: unknown, label?: unknown) {
-    return {
-      stringifiedMessage:
-        typeof message === 'object' ? JSON.stringify(message, undefined, 2) : <string>message,
-      stringifiedLabel: typeof label === 'object' ? JSON.stringify(label) : <string>(label || ''),
-    };
+    logger.warn(message as string, label);
   }
 }
 export const Logger = new BaseLogger();
+
+const pad = (str: string, length: number) => {
+  while (str.length < length) {
+    str += ' ';
+  }
+
+  return str;
+};
