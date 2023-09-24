@@ -1,11 +1,15 @@
+import { Logger } from '../shared/logger';
+
 export abstract class NotificationTemplate {
   public async sendNotification(): Promise<void> {
     const title = this.createTitle();
     const body = this.createBody();
     const image = this.attachImage();
+
     this.onBeforeSend();
     try {
-      const result = await this.send({title, body, image});
+      const result = await this.send({ title, body, image });
+
       this.onSuccess(result);
     } catch (error) {
       this.onError(error);
@@ -19,15 +23,23 @@ export abstract class NotificationTemplate {
 
   protected attachImage(): File | undefined {
     return undefined;
-   }
+  }
 
-  protected onBeforeSend(): void { }
+  protected onBeforeSend(): void {
+    Logger.log('Notification is about to be sent');
+  }
 
-  protected onAfterSend(): void { }
+  protected onAfterSend(): void {
+    Logger.log('Notification sent');
+  }
 
-  protected onError(_error: any): void { }
+  protected onError(_error: unknown): void {
+    Logger.error(_error);
+  }
 
-  protected onSuccess(_result: any): void { }
+  protected onSuccess(result: unknown): void {
+    Logger.log('Notification sent successfully', result);
+  }
 
-  protected abstract send(payload: any): Promise<void>;
+  protected abstract send(payload: unknown): Promise<void>;
 }
